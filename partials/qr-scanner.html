@@ -1,0 +1,20 @@
+<div class="col-sm-4 well">
+  <h5 class="area-label"><i class="fa fa-fw fa-qrcode fa-2x"></i> QR Scanner</h5>
+
+
+  <div class="input-group">
+    <input type="text" class="form-control"
+      ng-model="demo.endpoint" 
+      placeholder="your wallet address"
+      ng-options="ep for ep in allEndpoints" bs-typeahead data-limit=200 >
+
+
+    <span class="input-group-btn">
+      <button ng-click="reload(auth, demo.endpoint)"
+        class="btn btn-default btn-primary"
+        ng-disabled="!demo.endpoint || busy"
+        >&nbsp;<i ng-class="busy ? 'fa fa-refresh fa-spin' : 'fa fa-check'"></i> Scan&nbsp;</button>
+    </span>
+  </div>
+</div>
+

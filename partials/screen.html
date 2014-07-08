@@ -1,0 +1,97 @@
+<!-- shown as the contents of the screen area. Main focus of UI interactions. -->
+
+<p class="lead">Welcome to Our Crypto Dispensory</p>
+
+<p>Purchase cryptocurrencies in just three easy steps:</p>
+
+<ul>
+
+
+<li> Pick currency:
+    <form ng-controller="deliveryController">
+      <div class="btn-group" ng-model="coin_type" bs-radio-group >
+        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="btc">
+          Bitcoin
+        </label>
+        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="ltc">
+          Litecoin
+        </label>
+        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="blk">
+          Blackcoin
+        </label>
+        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="xtn">
+          Testnet3
+        </label>
+        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="xtn">
+          Testnet3
+        </label>
+      </div>
+
+      <div class="btn-group" ng-model="coin_type" bs-radio-group>
+        <label class="btn btn-default" ng-repeat="cct in currencies" >
+          <input type="radio" class="btn btn-default" value="{{cct.code}}">
+          {{cct.sign}} {{cct.name}}
+        </label>
+      </div>
+    </form>
+
+
+<!--
+<pre class="bs-example-scope">debug: {{currencies | json}};</pre>
+-->
+
+<li> Pick delivery method:
+  <form ng-controller="deliveryController">
+  <div class="form-group">
+
+    <div class="btn-group" ng-model="method" bs-radio-group>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="qr">
+        Scan QR
+      </label>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="paper">
+        Paper Voucher
+      </label>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="email">
+        Email
+      </label>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="sms">
+        SMS
+      </label>
+    </div>
+  </div>
+
+  <div ng-switch="method">
+    <div class="form-group" ng-switch-when='email'>
+      <label>Your Email Address</label>
+      <input type="email" class="form-control" id="email" placeholder="email@example.com">
+    </div>
+
+    <div class="form-group" ng-switch-when='sms'>
+      <label>Your Phone Number (for SMS)</label>
+      <input type="phone" class="form-control" id="phone" placeholder="+1 123 457645">
+    </div>
+
+    <div class="" ng-switch-when='paper'>
+      <p>
+        <em>A paper receipt will be printed at the conclusion of the transaction.</em>
+      </p>
+    </div>
+
+    <div class="" ng-switch-when='qr'>
+      <p>
+        <em>Scan the QR code for your wallet below.</em>
+      </p>
+    </div>
+  </div>
+            
+<!-- <pre class="bs-example-scope">$scope.method = {{method | json}};</pre> -->
+            
+    </form>
+
+<li> Insert cash.
+<li> Live free with crypto!
+</ol>
+            
+
+
+
