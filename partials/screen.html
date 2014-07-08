@@ -1,50 +1,50 @@
 <!-- shown as the contents of the screen area. Main focus of UI interactions. -->
 
-<p class="lead">Welcome to Our Crypto Dispensory</p>
+<p class="lead">Welcome To Your Local Crypto Dispensory</p>
 
-<p>Purchase cryptocurrencies in just three easy steps:</p>
+<style>
+.step-hdr {
+}
+.step-hdr > span {
+}
+.step-body {
+    margin-left: 3em;
+}
+</style>
 
-<ul>
+<p>Purchase cryptocurrencies in just a few easy steps:</p>
 
-
-<li> Pick currency:
-    <form ng-controller="deliveryController">
-      <div class="btn-group" ng-model="coin_type" bs-radio-group >
-        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="btc">
-          Bitcoin
-        </label>
-        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="ltc">
-          Litecoin
-        </label>
-        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="blk">
-          Blackcoin
-        </label>
-        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="xtn">
-          Testnet3
-        </label>
-        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="xtn">
-          Testnet3
-        </label>
-      </div>
-
-      <div class="btn-group" ng-model="coin_type" bs-radio-group>
-        <label class="btn btn-default" ng-repeat="cct in currencies" >
-          <input type="radio" class="btn btn-default" value="{{cct.code}}">
-          {{cct.sign}} {{cct.name}}
-        </label>
-      </div>
-    </form>
-
+<h4 class="step-hdr"><span>1.</span> Pick currency</h4>
+<div class="step-body">
+  <div ng-hide="txn.coin_type">
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-default"
+          ng-repeat="cct in currencies" for="pick_{{cct.code}}">
+        <input type="radio" class="btn btn-default"
+              ng-model="txn.coin_type" 
+              ng-value="cct"
+              id="pick_{{cct.code}}"
+              name="pick_{{cct.code}}">
+        <b>{{cct.sign}}</b> {{cct.name}} <small>{{cct.code}}</small>
+      </label>
+    </div>
+  </div>
+  <span ng-show="txn.coin_type">
+    <i class="fa fa-check fa-2x"></i> Buying <b>{{txn.coin_type.name}}</b> today!
+  </span>
+</div>
 
 <!--
+<pre class="bs-example-scope">trans.coin_type: {{currencies[txn.coin_type | json}};</pre>
 <pre class="bs-example-scope">debug: {{currencies | json}};</pre>
 -->
 
-<li> Pick delivery method:
-  <form ng-controller="deliveryController">
+<h4 class="step-hdr"><span>2.</span> Pick delivery method</h4>
+<div class="step-body">
+
   <div class="form-group">
 
-    <div class="btn-group" ng-model="method" bs-radio-group>
+    <div class="btn-group" ng-model="txn.method" bs-radio-group>
       <label class="btn btn-default"><input type="radio" class="btn btn-default" value="qr">
         Scan QR
       </label>
@@ -60,7 +60,7 @@
     </div>
   </div>
 
-  <div ng-switch="method">
+  <div ng-switch="txn.method">
     <div class="form-group" ng-switch-when='email'>
       <label>Your Email Address</label>
       <input type="email" class="form-control" id="email" placeholder="email@example.com">
@@ -86,12 +86,16 @@
             
 <!-- <pre class="bs-example-scope">$scope.method = {{method | json}};</pre> -->
             
-    </form>
-
-<li> Insert cash.
-<li> Live free with crypto!
-</ol>
-            
+    </div>
+</div>
 
 
+<h4 class="step-hdr"><span>3.</span> Insert cash</h4>
+<div class="step-body">
+</div>
 
+
+
+<h4 class="step-hdr"><span>4.</span> Live free with crypto!</h4>
+<div class="step-body">
+</div>

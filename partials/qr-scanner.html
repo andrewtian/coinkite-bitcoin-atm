@@ -1,18 +1,32 @@
+<style>
+.led-effect {
+    color: green;
+}
+</style>
+
 <div class="col-sm-4 well">
-  <h5 class="area-label"><i class="fa fa-fw fa-qrcode fa-2x"></i> QR Scanner</h5>
+  <h5 class="area-label"><i class="fa fa-fw fa-qrcode fa-2x"></i> QR Scanner
+<!--
+    <span ng-show="txn.method == 'qr'" class="pull-right">
+        <i class="fa fa-circle led-effect led-flash-on"></i>
+        <i class="fa fa-circle-o led-effect led-flash-off"></i>
+    </span>
+-->
+    <img src="images/flash-green.gif" ng-show="txn.method == 'qr'" class="pull-right">
+  </h5>
 
 
   <div class="input-group">
     <input type="text" class="form-control"
-      ng-model="demo.endpoint" 
+      ng-model="txn.dest_pubkey" 
       placeholder="your wallet address"
-      ng-options="ep for ep in allEndpoints" bs-typeahead data-limit=200 >
+      ng-disabled="txn.method != 'qr'">
 
 
     <span class="input-group-btn">
-      <button ng-click="reload(auth, demo.endpoint)"
+      <button ng-click="new_pubkey()"
         class="btn btn-default btn-primary"
-        ng-disabled="!demo.endpoint || busy"
+        ng-disabled="txn.method != 'qr'"
         >&nbsp;<i ng-class="busy ? 'fa fa-refresh fa-spin' : 'fa fa-check'"></i> Scan&nbsp;</button>
     </span>
   </div>

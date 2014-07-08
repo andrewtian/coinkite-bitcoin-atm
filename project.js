@@ -3,17 +3,19 @@
 var CK_API_HOST = 'https://api.coinkite.com';
 var CK_API_KEYS = {};
 
-var app = angular.module('cc-example-module', ['mgcrea.ngStrap', 'restangular' ]);
+var app = angular.module('cc-example-module', ['mgcrea.ngStrap', 'restangular', 'ngDragDrop']);
 
-app.controller('mainController', function($scope, Restangular) {
+app.controller('mainController', function($scope, $interval, $timeout, Restangular) {
 
 	// NOTE: This endpoint is public and does not require any API key to read.
+/*
     var tmp = Restangular.all('public/endpoints');
     tmp.getList().then(function(eps) {
         console.log("Got endpoint list ok");
 
         $scope.allEndpoints = eps;
     });
+*/
 
   $scope.currencies = [
     { code: 'BTC', name: 'Bitcoin', sign: 'Ƀ' },
@@ -22,12 +24,25 @@ app.controller('mainController', function($scope, Restangular) {
     { code: 'XTN', name: 'Testnet3', sign: '❀' },
   ];
 
+    // these have to be picked by the user
+    $scope.txn = {
+        coin_type: null,
+        method: null,
+
+        // what they have inserted so far
+        deposit_list: {},
+    };
+        
+
+    $scope.list1 = {title: "testing"};
+    $scope.list2 = {};
+
 });
 
 app.controller('deliveryController', function($scope) {
 
   $scope.method = "qr";
-  $scope.coin_type = "btc";
+  //$scope.coin_type = { cct: "btc" } ;
 
 });
 
