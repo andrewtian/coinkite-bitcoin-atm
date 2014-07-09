@@ -1,0 +1,40 @@
+/* from http://stackoverflow.com/questions/13955163 */
+.blink {
+  animation: blink 1s steps(5, start) infinite;
+  -webkit-animation: blink 1s steps(5, start) infinite;
+}
+@keyframes blink {
+  to { visibility: hidden; }
+}
+@-webkit-keyframes blink {
+  to { visibility: hidden; }
+}
+
+.area-label {
+    margin-top: -10px;
+    /*margin-left: -12px;*/
+    font-size: 18px;
+}
+.area-label > i.fa {
+    margin-right: 6px;
+}
+
+/* 3 modules along bottom that simulate hardware devices */
+.modules-row div.col-sm-4 {
+    height: 300px;
+}
+
+.bill-btn {
+    width: 7em;
+    margin-bottom: 7px;
+}
+
+
+/* partials/screen - the N steps */
+.step-hdr {
+}
+.step-hdr > span {
+}
+.step-body {
+    margin-left: 1.4em;
+}

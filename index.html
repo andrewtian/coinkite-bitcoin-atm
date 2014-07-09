@@ -1,10 +1,6 @@
 <!doctype html>
 <html ng-app="cc-example-module"><head>
 
-<!-- jquery - required for drag-n-drop -->
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
-
 <!-- Angular basics -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular.min.js"></script>
 <script src="https://oss.maxcdn.com/angular.strap/2.0.2/angular-strap.min.js"></script>
@@ -21,11 +17,11 @@
 <!-- HMAC-SHA256 in the browser code -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js"></script>
 
-<script src="angular-dragdrop.min.js"></script>
-
 <!-- code specific to Coinkite and this project -->
 <script src="coinkite-api.js" charset="utf-8"></script>
 <script src="project.js" charset="utf-8"></script>
+
+<link href="style.css" rel="stylesheet">
 
 </head>
 
@@ -34,55 +30,29 @@
 	<div class="row">
 	  <div class="col-md-12">
 		<h1 class="title">
-			<i class="fa fa-bank fa-2x"></i> Bitcoin A.T.M. <small>Litecoin, BlackCoin, too</small>
+          <i class="fa fa-bank fa-2x"></i>
+          Bitcoin ATM
+          <small>with Litecoin and Blackcoin</small>
 		</h1>
 
 		<p class="lead">
 			This page demonstrates using <a href="http://angularjs.org/">AngularJS</a>
 			to simulate a Bitcoin vending machine (often called ATM). Learn more about
             what the <a href="https://api.coinkite.com">Coinkite API</a> can do!
+            <a href="https://github.com/coinkite/coinkite-bitcoin-atm"
+                >Full source on github/Coinkite.</a>
 		</p>
 
 	  </div>
 	</div>
   </div>
 
-<style>
-.area-label {
-    margin-top: -10px;
-    /*margin-left: -12px;*/
-    font-size: 18px;
-}
-.area-label > i.fa {
-    margin-right: 6px;
-}
-
-.modules-row div.col-sm-4 {
-    height: 300px;
-}
-
-.bill-btn {
-    width: 7em;
-    margin-bottom: 7px;
-}
-
-
-</style>
-
   <div class="container">
 	<div class="row">
 	  <div class="col-sm-12">
         <div class="row">
-<!--
-            <h5 class="area-label">
-<span class="fa-stack fa-lg fa-fw" style="margin-right: 6px; top: 5px">
-  <i class="fa fa-square-o fa-stack-2x" style="left: -12px; font-size: 1.5em"></i>
-  <i class="fa fa-hand-o-left fa-large fa-stack-1x" style="top: -8px; left: 13px"></i>
-</span> Touch Screen
-            </h5>
--->
 
-          <div class="col-sm-12 well" style="min-height: 400px">
+          <div class="col-sm-12 well" style="min-height: 440px">
             <ng-include src="'partials/screen.html'"></ng-include>
           </div>
         </div>
@@ -97,6 +67,4 @@
 	</div>
 
   </div>
-</body>
-
-</html>
+</body></html>

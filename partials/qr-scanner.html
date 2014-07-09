@@ -12,7 +12,8 @@
         <i class="fa fa-circle-o led-effect led-flash-off"></i>
     </span>
 -->
-    <img src="images/flash-green.gif" ng-show="txn.method == 'qr'" class="pull-right">
+    <ng-include src="'partials/blinky.html'" ng-show="need_qr()">
+    </ng-include>
   </h5>
 
 
@@ -25,9 +26,9 @@
 
     <span class="input-group-btn">
       <button ng-click="new_pubkey()"
-        class="btn btn-default btn-primary"
-        ng-disabled="txn.method != 'qr'"
-        >&nbsp;<i ng-class="busy ? 'fa fa-refresh fa-spin' : 'fa fa-check'"></i> Scan&nbsp;</button>
+        class="btn btn-default btn-primary" ng-disabled="txn.method != 'qr'"
+        >&nbsp;<i ng-class="busy ? 'fa fa-refresh fa-spin' : 'fa fa-qrcode'"></i>
+            Scan&nbsp;</button>
     </span>
   </div>
 </div>

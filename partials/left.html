@@ -1,0 +1,100 @@
+<!-- shown as the contents of the screen area. Main focus of UI interactions. -->
+
+<p class="lead">Welcome To Your Local Crypto Dispensory</p>
+
+<p>Purchase crypto-currencies in just a few easy steps:</p>
+
+<h4 class="step-hdr"><span>1.</span> Pick currency.</h4>
+<div class="step-body">
+  <div ng-hide="txn.coin_type">
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-default"
+          ng-repeat="cct in currencies" for="pick_{{cct.code}}">
+        <input type="radio" class="btn btn-default"
+              ng-model="txn.coin_type" 
+              ng-value="cct"
+              id="pick_{{cct.code}}"
+              name="pick_{{cct.code}}">
+        <b>{{cct.sign}}</b> {{cct.name}} <small>{{cct.code}}</small>
+      </label>
+    </div>
+  </div>
+  <span ng-show="txn.coin_type">
+    <p>
+      <i class="fa fa-check fa-2x"></i> Buying <b>{{txn.coin_type.name}}</b> today!
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      <button class="btn btn-xs" ng-click="reset_all()" ng-hide="can_stop()">
+        <i class="fa fa-power-off"></i> Start Over
+      </button>
+    </p>
+  </span>
+</div>
+
+<!--
+<pre class="bs-example-scope">trans.coin_type: {{currencies[txn.coin_type | json}};</pre>
+<pre class="bs-example-scope">debug: {{currencies | json}};</pre>
+-->
+
+<h4 class="step-hdr"><span>2.</span> Pick delivery method.</h4>
+<div class="step-body" ng-show="txn.coin_type">
+
+  <div class="form-group">
+
+    <div class="btn-group" ng-model="txn.method" bs-radio-group>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="qr">
+        Scan QR
+      </label>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="paper">
+        Paper Voucher
+      </label>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="email">
+        Email
+      </label>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="sms">
+        SMS
+      </label>
+    </div>
+  </div>
+
+  <div ng-switch="txn.method">
+    <p>
+      <div class="form-group" ng-switch-when='email'>
+        <label>Your Email Address</label>
+        <input type="email" class="form-control" id="email" placeholder="email@example.com"
+          ng-model="txn.dest_email">
+      </div>
+
+      <div class="form-group" ng-switch-when='sms'>
+        <label>Your Phone Number (for SMS)</label>
+        <input type="phone" class="form-control" id="phone" placeholder="+1 123 457645"
+          ng-model="txn.dest_phone">
+      </div>
+
+      <div class="" ng-switch-when='paper'>
+        <em>A paper receipt will be printed at the conclusion of the transaction.</em>
+      </div>
+
+      <div class="" ng-switch-when='qr'>
+        <em>Scan the QR code for your wallet below.</em>
+      </div>
+    </p>
+  </div>
+            
+<!-- <pre class="bs-example-scope">$scope.method = {{method | json}};</pre> -->
+</div>
+
+
+<h4 class="step-hdr"><span>3.</span> Insert cash.</h4>
+<div class="step-body" ng-show="cash_ready()">
+  <p>
+    <em>Please insert your cash bills below.</em>
+  </p>
+
+  <p ng-show="can_stop()">
+    <button class="btn btn-primary" ng-click="finalize_transaction()">
+      <i class="fa fa-check"></i> Complete Transaction
+    </button>
+  </p>
+</div>

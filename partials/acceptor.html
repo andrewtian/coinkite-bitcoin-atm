@@ -1,32 +1,25 @@
 <div class="col-sm-4 well">
-  <h5 class="area-label"><i class="fa fa-fw fa-toggle-up fa-2x"></i> Bill Acceptor</h5>
+  <h5 class="area-label"> 
+    <span class="fa-stack fa-lg">
+      <i class="fa fa-toggle-up fa-stack-2x" style="top: -3px; font-size: 1.5em"></i>
+      <i class="fa fa-money fa-large fa-rotate-90 fa-stack-1x" style="top: 14px"></i>
+    </span>
+    Bill Acceptor
+
+    <ng-include src="'partials/blinky.html'" ng-show="cash_ready()">
+    </ng-include>
+  </h5>
 
   <p>
-
-<div 
-</div>
-
-    <button class="btn btn-lg btn-block"
-        data-drop="true" data-jqyoui-options ng-model="txn.deposit_list" jqyoui-droppable>
-      <span class="fa-stack fa-lg">
-        <i class="fa fa-toggle-up fa-stack-2x" style="top: -3px; font-size: 1.5em"></i>
-        <i class="fa fa-money fa-large fa-rotate-90 fa-stack-1x" style="top: 14px"></i>
-      </span>
-
-      <b>Drag Bills Here</b>
-        {{ desposit_list|json }}
-    </button>
+    <em>Click to simulate inserting that bill.</em>
   </p>
 
   <ul class="list-inline">
-    <li><button class="btn btn-sm btn-success bill-btn" data-drag="true">C$5 CAD</button>
-    <li><button class="btn btn-sm btn-success bill-btn" data-drag="true">$5 USD</button>
-    <li><button class="btn btn-sm btn-success bill-btn" data-drag="true">NZ$5 NZD</button>
-    <li><button class="btn btn-sm btn-success bill-btn" data-drag="true">&euro;5 EUR</button>
-    <li><button class="btn btn-sm btn-success bill-btn" data-drag="true">&euro;10 EUR</button>
-
-<div class="btn btn-primary" data-drag="true" data-jqyoui-options="{revert: 'invalid'}"
-ng-model="list1" jqyoui-draggable="{animate:true, placeholder: 'keep'}">{{list1.title}}</div>
+    <li ng-repeat="bill in possible_bills">
+      <button class="btn btn-sm btn-success bill-btn"
+          ng-disabled="!cash_ready()"
+          ng-click="insert_bill(bill)">{{bill.label}}</button>
+    </li>
   </ul>
 
 </div>

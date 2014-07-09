@@ -1,4 +1,4 @@
-# Coinkite API Browser in [AngularJS](https://angularjs.org/)
+# Coinkite Bitcoin ATM Example in [AngularJS](https://angularjs.org/)
 
 [Learn more about Coinkite's API here](https://docs.coinkite.com/)
 and visit the [Coinkite Main Site](https://coinkite.com/) to open your
@@ -36,8 +36,7 @@ For this demo, we are using:
 - font-awesome <http://fontawesome.io/>
 - crypto-js (just HMAC-SHA256) <https://code.google.com/p/crypto-js/>
 
-All these files, except `json-print`, are being provided by CDN sources
-to make this package lighter.
+All these files, are being provided by CDN sources to make this package lighter.
 
 ## Discussion
 

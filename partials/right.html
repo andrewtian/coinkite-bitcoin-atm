@@ -1,0 +1,59 @@
+<style>
+.all-center {
+    text-align: center;
+}
+
+</style>
+<div class="text-center">
+  <h3>Transaction</h3>
+
+  <h4>Buying {{txn.coin_type.name}}</h4>
+
+  <p ng-switch="txn.method">
+    <i class="fa fa-arrow-right"></i>
+    <span ng-switch-when="qr" ng-show="txn.dest_pubkey">
+      Sending to address:
+      <br><code>{{txn.dest_pubkey}}</code>
+    </span>
+
+    <span ng-switch-when="paper">
+      Printed Voucher
+    </span>
+
+    <span ng-switch-when="email">
+      Email voucher to:
+      <br>
+        <code ng-show="txn.dest_email">{{txn.dest_email}}</code>
+        <em ng-hide="txn.dest_email">(need valid email)</em>
+    </span>
+
+    <span ng-switch-when="sms">
+      SMS voucher to:
+      <br>
+        <code>{{txn.dest_phone}}</code>
+        <em ng-hide="txn.dest_phone">(need phone #)</em>
+    </span>
+
+    <span ng-switch-default>(where to?)</span>
+  </p>
+
+  <div ng-show="txn.deposit_list.length">
+    <h4>Deposit Amount</h4>
+
+    <div class="row">
+      <div class="col-sm-8 col-sm-offset-2">
+        <table class="table table-condensed">
+<!--          <thead>
+            <tr><th width="50%" class="text-right">Qty
+                <th width="50%">Currency -->
+          <tbody>
+            <tr ng-repeat="bb in txn.deposit_list track by $index">
+              <td class="text-right">{{bb.sign}} {{bb.amount}}
+              <td class="text-left">{{bb.cct}}
+            </tr>
+        </table>
+      </div> 
+    </div>
+
+  </div> 
+</div>
