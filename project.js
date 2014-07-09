@@ -8,15 +8,14 @@ var app = angular.module('cc-example-module', ['mgcrea.ngStrap', 'restangular'])
 app.controller('mainController', function($scope, Restangular) {
 
 	// NOTE: This endpoint is public and does not require any API key to read.
-/*
-    var tmp = Restangular.all('public/endpoints');
-    tmp.getList().then(function(eps) {
-        console.log("Got endpoint list ok");
+    $scope.rates = {};
+    Restangular.oneUrl('public/rates').get().then(function(eps) {
+        console.log("Got rate-list list ok");
 
-        $scope.allEndpoints = eps;
+        $scope.rates = eps.rates;
     });
-*/
 
+    // We will only display these crypto currencies. Comment them out to not support
     $scope.currencies = [
       { code: 'BTC', name: 'Bitcoin', sign: 'Ƀ' },
       { code: 'LTC', name: 'Litecoin', sign: 'Ł' },
@@ -24,13 +23,20 @@ app.controller('mainController', function($scope, Restangular) {
       { code: 'XTN', name: 'Testnet3', sign: '❀' },
     ];
 
+    // List your local fiat currencies here, in order of preference.
+    $scope.fav_currencies = [ 'CAD', 'USD', 'CNY' ];
+    $scope.filter_fav_currency = function(pair) {
+        //console.log("pair = ", pair);
+        return _.contains($scope.fav_currencies, pair.code);
+    };
+
     $scope.possible_bills = [
         { label:'C$5 CAD', value: { amount: 5, cct: 'CAD', sign: 'C$'}},
         { label:'$5 USD', value: { amount: 5, cct: 'USD', sign: '$'}},
         { label:'NZ$5 NZD', value: { amount: 5, cct: 'NZD', sign: 'NZ$'}},
         { label:'€5 EUR', value: { amount: 5, cct: 'EUR', sign: '€'}},
         { label:'₩5000 KRW', value: { amount: 5000, cct: 'KRW', sign: '₩'}},
-        { label:'¥100 CHY', value: { amount: 100, cct: 'CHY', sign: '¥'}},
+        { label:'¥100 CNY', value: { amount: 100, cct: 'CNY', sign: '¥'}},
         { label:'руб 1000', value: { amount: 1000, cct: 'RUB', sign: 'руб'}},
     ];
 
@@ -47,9 +53,8 @@ app.controller('mainController', function($scope, Restangular) {
 
             // what they have inserted so far
             deposit_list: [],
+            active_cct: [$scope.reset_fav_cct],
         };
-
-        $scope.fav_cct = 'CAD';
     };
     $scope.reset_all();
 
@@ -85,19 +90,40 @@ app.controller('mainController', function($scope, Restangular) {
         }
         
         $scope.txn.deposit_list.push(angular.copy(bill.value));
+        $scope.txn.active_cct.push(bill.value.cct);
+    };
+
+    $scope.current_quote = function() {
+        if(!$scope.txn.coin_type) return;
+
+        var tot = 0;
+        var cct = $scope.txn.coin_type.code;
+        var lst = $scope.txn.deposit_list;
+        var pairs = $scope.rates[cct];
+
+        for(var i=0; i < lst.length; i++) {
+            var h = lst[i];
+            for(var j=0; j < pairs.length; j++) {
+                if(pairs[j].code == h.cct) {
+                  tot += h.amount / pairs[j].rate;
+                }
+            }
+            // XXX no credit for pairs we don't know how to convert!
+        }
+
+        // clear some junk bits
+        if(tot > 1000) {
+            tot = tot.toFixed(2);
+        } else if(tot > 0.01) {
+            tot = tot.toFixed(4);
+        }
+
+        return Number(tot).toFixed(8);
     };
 
     $scope.finalize_transaction = function() {
         $scope.reset_all()
     }
-
-
-});
-
-app.controller('deliveryController', function($scope) {
-
-  $scope.method = "qr";
-  //$scope.coin_type = { cct: "btc" } ;
 
 });
 
@@ -138,9 +164,6 @@ app.controller('CKReadCtrl', function($scope, $http) {
     $scope.auth = {
         api_key: '',
         api_secret: '',
-    };
-    $scope.demo = {
-        endpoint: '/v1/my/self',
     };
     $scope.last_response = '';
     $scope.response_time = '';

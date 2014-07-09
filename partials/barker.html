@@ -1,0 +1,15 @@
+<div>
+  <h3 class="text-center">Exchange Rates</h3>
+
+  <div ng-repeat="from_cct in currencies">
+    <div ng-repeat="pair in rates[from_cct.code] | filter:filter_fav_currency">
+      <h4 ng-show="$first">One {{from_cct.name}} is...
+          <small class="pull-right">{{from_cct.code}}</small>
+      </h4>
+        
+      <center>
+        {{pair.pretty}} <small>{{pair.code}}</small>
+      </center>
+    </div>
+  </div>
+</div>
