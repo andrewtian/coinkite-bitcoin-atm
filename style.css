@@ -38,3 +38,11 @@
 .step-body {
     margin-left: 1.4em;
 }
+
+/* kill line between rows, but useful with other BS3 table classes */
+table.pdg-no-border td {
+    border-top: none !important;
+}
+table.pdg-no-border {
+    margin-bottom: 0;
+}

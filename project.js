@@ -1,6 +1,7 @@
 // Global config here... sigh
 //
 var CK_API_HOST = 'https://api.coinkite.com';
+//var CK_API_HOST = 'http://lh:5001';
 var CK_API_KEYS = {};
 
 var app = angular.module('cc-example-module', ['mgcrea.ngStrap', 'restangular']);
@@ -9,11 +10,14 @@ app.controller('mainController', function($scope, Restangular) {
 
 	// NOTE: This endpoint is public and does not require any API key to read.
     $scope.rates = {};
-    Restangular.oneUrl('public/rates').get().then(function(eps) {
-        console.log("Got rate-list list ok");
+    $scope.reload_rates = function() {
+      Restangular.oneUrl('public/rates').get().then(function(eps) {
+          console.log("Got rate-list list ok");
 
-        $scope.rates = eps.rates;
-    });
+          $scope.rates = eps.rates;
+      });
+    }
+    $scope.reload_rates();
 
     // We will only display these crypto currencies. Comment them out to not support
     $scope.currencies = [
@@ -25,7 +29,9 @@ app.controller('mainController', function($scope, Restangular) {
 
     // List your local fiat currencies here, in order of preference.
     $scope.fav_currencies = [ 'CAD', 'USD', 'CNY' ];
+
     $scope.filter_fav_currency = function(pair) {
+        // some JS logic because I can't get angular to do this in the template.
         //console.log("pair = ", pair);
         return _.contains($scope.fav_currencies, pair.code);
     };
@@ -69,7 +75,7 @@ app.controller('mainController', function($scope, Restangular) {
     };
 
     $scope.can_stop = function() {
-        // when are we ready to complete the transaction.
+        // when are we ready to complete the transaction?
         return $scope.cash_ready() && $scope.txn.deposit_list.length;
     };
 
@@ -103,11 +109,8 @@ app.controller('mainController', function($scope, Restangular) {
 
         for(var i=0; i < lst.length; i++) {
             var h = lst[i];
-            for(var j=0; j < pairs.length; j++) {
-                if(pairs[j].code == h.cct) {
-                  tot += h.amount / pairs[j].rate;
-                }
-            }
+            var ex = pairs[h.cct].rate;
+            tot += h.amount / ex;
             // XXX no credit for pairs we don't know how to convert!
         }
 
@@ -127,7 +130,7 @@ app.controller('mainController', function($scope, Restangular) {
 
 });
 
-app.controller('CKReadCtrl', function($scope, $http) {
+app.controller('CKReadCtrl', function($scope, $http, $log) {
 
     $scope.reload = function(auth, endpoint) {
       // copy to global var, where more easily used...
@@ -143,20 +146,15 @@ app.controller('CKReadCtrl', function($scope, $http) {
       $scope.busy = true;
       $scope.failed = false;
       $scope.last_url = url;
-      $scope.before = performance.now()
-      $scope.response_time = 'Loading...';
 
       $http({method:'GET', url:url, headers:get_auth_headers(endpoint)})
 			.success(function(d, stat) {
                 $scope.busy = false;
                 $scope.last_response = d;
-                $scope.response_time = ((performance.now() - $scope.before) /1000).toFixed(3) 
-                                                    + ' seconds';
 			}).error(function(d, stat) {
 				$scope.failed = true;
                 $scope.busy = false;
                 $scope.last_response = '"(failed)"';
-                $scope.response_time = stat + ' error';
 			});
     };
 
@@ -166,15 +164,17 @@ app.controller('CKReadCtrl', function($scope, $http) {
         api_secret: '',
     };
     $scope.last_response = '';
-    $scope.response_time = '';
     $scope.last_url = '';
 
 	// Try to populate keys with useful defaults... ok if this fails.
 	$http({method:'GET', url:'my-keys.json'}).success(function(d, status) {
 		if(status == 200) {
 			$scope.auth = d;
+            angular.extend(CK_API_KEYS, d);
+            if(d.host) CK_API_HOST = d.host;
+            $log.info("Got your keys");
 		} else {
-			console.info(
+			$log.info(
 "NOTE: You can add a JSON file in 'my-keys.json' in this directory to pre-fill your key values.");
 		}
     });
@@ -184,13 +184,13 @@ app.factory('myInterceptor', ['$log', function($log) {
 
     var myInterceptor = {
        'request': function(config) {
-            $log.debug("HTTP Request: ", config);
+            //$log.debug("HTTP Request: ", config);
 
             return config;
         },
 
         'response': function(response) {
-            $log.debug("HTTP Response: ", response);
+            //$log.debug("HTTP Response: ", response);
             return response;
         },
 
@@ -218,7 +218,7 @@ app.config(function(RestangularProvider) {
     RestangularProvider.setBaseUrl(CK_API_HOST);
 
     RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
-        console.log("Full req: ", headers, url, route);
+        console.log("Full request: ", headers, url, route);
 
         _.extend(headers, get_auth_headers(route));
 
@@ -231,7 +231,6 @@ app.config(function(RestangularProvider) {
     });
 
     RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response, deferred) {
-      //$scope.last_json = data;
         if(response.status != 200) {
             console.error("CK Request failed: " + response.status);
             console.error("JSON contents: ", data);

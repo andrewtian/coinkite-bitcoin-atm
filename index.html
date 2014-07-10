@@ -27,24 +27,8 @@
 
 <body ng-controller="mainController">
   <div class="container">
-	<div class="row">
-	  <div class="col-md-12">
-		<h1 class="title">
-          <i class="fa fa-bank fa-2x"></i>
-          Bitcoin ATM
-          <small>with Litecoin and Blackcoin</small>
-		</h1>
-
-		<p class="lead">
-			This page demonstrates using <a href="http://angularjs.org/">AngularJS</a>
-			to simulate a Bitcoin vending machine (often called ATM). Learn more about
-            what the <a href="https://api.coinkite.com">Coinkite API</a> can do!
-            <a href="https://github.com/coinkite/coinkite-bitcoin-atm"
-                >Full source on github/Coinkite.</a>
-		</p>
-
-	  </div>
-	</div>
+    <ng-include src="'partials/banner.html'"></ng-include>
+    <ng-include src="'partials/apikeys.html'"></ng-include>
   </div>
 
   <div class="container">

@@ -1,0 +1,21 @@
+<div ng-controller="CKReadCtrl">
+  <form novalidate class="form-horizontal" role="form">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">API Key / Secret</label>
+
+      <div class="col-sm-4">
+        <input type="text" class="form-control" ng-model="auth.api_key"
+            placeholder="Kxxxxxxxx-xxxxxxxx-xxxxxxxxxxxxxxxx">
+      </div>
+      <div class="col-sm-4">
+        <input type="password" class="form-control" ng-model="auth.api_secret"
+            placeholder="Sxxxxxxxx-xxxxxxxx-xxxxxxxxxxxxxxxx">
+      </div>
+      <div class="col-sm-2">
+        <span ng-show="busy">
+            <i class="fa fa-refresh fa-spin"></i>
+        </span>
+      </div>
+    </div>
+  </form>
+</div>

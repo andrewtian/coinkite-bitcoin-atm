@@ -1,15 +1,35 @@
-<div>
-  <h3 class="text-center">Exchange Rates</h3>
 
-  <div ng-repeat="from_cct in currencies">
-    <div ng-repeat="pair in rates[from_cct.code] | filter:filter_fav_currency">
-      <h4 ng-show="$first">One {{from_cct.name}} is...
+<div class="panel panel-default">
+
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      Exchange Rates
+      <a href="#" class="btn btn-xs pull-right" ng-click="reload_rates()">
+        <i class="fa fa-refresh"></i>
+      </a>
+    </h3>
+  </div>
+
+  <span ng-repeat="from_cct in currencies">
+    <div ng-show="rates[from_cct.code]" class="panel-heading" style="background: #eee">
+      <h4 class="panel-title">
+          <b>{{from_cct.sign}}</b> &mdash; {{from_cct.name}} 
           <small class="pull-right">{{from_cct.code}}</small>
       </h4>
-        
-      <center>
-        {{pair.pretty}} <small>{{pair.code}}</small>
-      </center>
     </div>
-  </div>
+
+    <table class="table" ng-show="rates[from_cct.code]" style="margin-bottom:0">
+      <tbody>
+      <tr ng-repeat="to_cct in fav_currencies" ng-init="pair = rates[from_cct.code][to_cct]">
+        <td class="text-right">
+          {{pair.pretty}}
+        </td>
+        <td class="text-left">
+          <small>{{pair.code}}</small>
+        </td>
+      </tr>
+      <tfoot>
+    </table>
+
+  </span>
 </div>

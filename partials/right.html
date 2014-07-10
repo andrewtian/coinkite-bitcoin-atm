@@ -4,12 +4,12 @@
 }
 
 </style>
-<div class="text-center">
-  <h3>Transaction</h3>
+<div class="text-center panel panel-info">
+  <div class="panel-heading">
+    <h4 class="panel-title">Transaction: Buying {{txn.coin_type.name}}</h4>
+  </div>
 
-  <h4>Buying {{txn.coin_type.name}}</h4>
-
-  <p ng-switch="txn.method">
+  <div ng-switch="txn.method" class="panel-body">
     <i class="fa fa-arrow-right"></i>
     <span ng-switch-when="qr" ng-show="txn.dest_pubkey">
       Sending to address:
@@ -35,30 +35,35 @@
     </span>
 
     <span ng-switch-default>(where to?)</span>
-  </p>
+  </div>
 
-  <div ng-show="txn.deposit_list.length">
-    <h4>Deposit Amount</h4>
+  <ul class="list-group" ng-show="txn.deposit_list.length">
+    <li class="list-group-item">
+        <strong>Deposit Amount</strong>
+    </li>
 
-    <div class="row">
-      <div class="col-sm-8 col-sm-offset-2">
-        <table class="table table-condensed">
-<!--          <thead>
-            <tr><th width="50%" class="text-right">Qty
-                <th width="50%">Currency -->
+    <li class="list-group-item">
+        <table class="table table-condensed pdg-no-border">
           <tbody>
             <tr ng-repeat="bb in txn.deposit_list track by $index">
-              <td class="text-right">{{bb.sign}} {{bb.amount}}
-              <td class="text-left">{{bb.cct}}
+              <td class="text-right" width="50%">{{bb.sign}} {{bb.amount}}
+              <td class="text-left" width="50%">{{bb.cct}}
             </tr>
         </table>
-      </div> 
-    </div>
+    </li>
 
-    <h4>Your {{txn.coin_type.name}}s</h4>
-    <div>
+    <li class="list-group-item">
+      <strong>Your {{txn.coin_type.name}}s</strong>
+    </li>
+
+    <div class="panel-body">
+      <p class="lead">
         {{txn.coin_type.sign}} {{ current_quote() }}
+      </p>
+      <p ng-show="txn.coin_type.code == 'BTC'">
+          {{ (current_quote() *1e6) | number:0 }} bits
+      </p>
     </div>
 
-  </div> 
+  </ul> 
 </div>
