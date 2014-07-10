@@ -130,61 +130,61 @@ app.controller('mainController', function($scope, Restangular) {
 
 });
 
-app.controller('CKReadCtrl', function($scope, $http, $log) {
-
-    $scope.reload = function(auth, endpoint) {
-      // copy to global var, where more easily used...
-      angular.extend(CK_API_KEYS, auth);
-	  if(auth.host) {
-		  CK_API_HOST = auth.host;
-	  }
-
-      if(!endpoint) return;
-
-      url = CK_API_HOST + endpoint;
-
-      $scope.busy = true;
-      $scope.failed = false;
-      $scope.last_url = url;
-
-      $http({method:'GET', url:url, headers:get_auth_headers(endpoint)})
-			.success(function(d, stat) {
-                $scope.busy = false;
-                $scope.last_response = d;
-			}).error(function(d, stat) {
-				$scope.failed = true;
-                $scope.busy = false;
-                $scope.last_response = '"(failed)"';
-			});
-    };
-
+app.controller('CKReadCtrl', function($scope, $http, $log, Restangular)
+{
 	// Initial state for variables.
     $scope.auth = {
         api_key: '',
         api_secret: '',
     };
-    $scope.last_response = '';
-    $scope.last_url = '';
 
 	// Try to populate keys with useful defaults... ok if this fails.
 	$http({method:'GET', url:'my-keys.json'}).success(function(d, status) {
 		if(status == 200) {
-			$scope.auth = d;
-            angular.extend(CK_API_KEYS, d);
             if(d.host) CK_API_HOST = d.host;
+            angular.extend(CK_API_KEYS, d);
+			$scope.auth = d;
+
             $log.info("Got your keys");
 		} else {
-			$log.info(
-"NOTE: You can add a JSON file in 'my-keys.json' in this directory to pre-fill your key values.");
+			$log.info("NOTE: You can add a JSON file in 'my-keys.json' in this directory"
+                        +" to pre-fill your key values.");
 		}
+    });
+
+    // Monitor the auth keys, and fetch the account list when/if they change.
+    $scope.accounts_ok = false;
+
+    // Whenever the keys change (or are set right), fetch the account
+    // list as a test and also to start configuring ourselves to suit the new user's
+    // account types.
+    //
+    $scope.$watch('auth', function(newVal, oldVal) {
+        if(!newVal.api_key || !newVal.api_secret) {
+            console.warn("Empty API key or secret");
+            $scope.accounts_ok = false;
+            return;
+        }
+        console.log("Watch triggers")
+
+        Restangular.oneUrl('v1/my/accounts').get().then(function(d) {
+            var accounts = d.results;
+
+            console.log("Got account list ok: ", accounts);
+
+            $scope.accounts_ok = true;
+        });
     });
 });
 
-app.factory('myInterceptor', ['$log', function($log) {
+app.factory('myInterceptor', ['$log', function($log)
+{
+
+    // Purely for debug, and somewhat annoying.
 
     var myInterceptor = {
        'request': function(config) {
-            //$log.debug("HTTP Request: ", config);
+            $log.debug("HTTP Request: " + config.url, config);
 
             return config;
         },
@@ -214,13 +214,14 @@ app.config(['$httpProvider', function($httpProvider) {
 
 
 app.config(function(RestangularProvider) {
+console.log("Hello?");
 
     RestangularProvider.setBaseUrl(CK_API_HOST);
 
     RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
         console.log("Full request: ", headers, url, route);
 
-        _.extend(headers, get_auth_headers(route));
+        _.extend(headers, get_auth_headers('/' + route));
 
       return {
         element: element,

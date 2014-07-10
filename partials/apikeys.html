@@ -1,5 +1,6 @@
 <div ng-controller="CKReadCtrl">
-  <form novalidate class="form-horizontal" role="form">
+  <form novalidate class="form-horizontal" role="form" name="apikeys_form"
+            ng-model-options="{ debounce: 1000 }">
     <div class="form-group">
       <label class="col-sm-2 control-label">API Key / Secret</label>
 
@@ -12,8 +13,11 @@
             placeholder="Sxxxxxxxx-xxxxxxxx-xxxxxxxxxxxxxxxx">
       </div>
       <div class="col-sm-2">
-        <span ng-show="busy">
-            <i class="fa fa-refresh fa-spin"></i>
+        <span ng-show="accounts_ok">
+          <i class="fa fa-check-square fa-2x"></i>
+        </span>
+        <span ng-hide="accounts_ok">
+          <i class="fa fa-frown-o fa-2x"></i>
         </span>
       </div>
     </div>
