@@ -96,7 +96,8 @@
 
   <p ng-show="can_stop()">
     <button class="btn btn-primary" ng-click="finalize_transaction()">
-      <i class="fa fa-check"></i> Complete Transaction
+      <i ng-class="txn.busy ? 'fa fa-refresh fa-spin' : 'fa fa-check'"></i>
+      &nbsp; Complete Transaction
     </button>
     &nbsp;
     &nbsp;

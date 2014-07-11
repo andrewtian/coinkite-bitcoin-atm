@@ -7,17 +7,20 @@ var CK_API_KEYS = {};
 var app = angular.module('cc-example-module', ['mgcrea.ngStrap', 'restangular']);
 
 
-app.controller('mainController', function($scope, Restangular, $sce) {
+app.controller('mainController', function($scope, Restangular, $sce, $alert, $timeout) {
 
 	// NOTE: This endpoint is public and does not require any API key to read.
     $scope.rates = {};
     $scope.reload_rates = function() {
-        Restangular.oneUrl('public/rates').get().then(function(r) {
+        Restangular.one('public/rates').get().then(function(r) {
             console.log("Got rate-list list ok");
             var rates = r.rates;
 
             // make up some numbers for testnet...
             rates['XTN'] = angular.copy(rates['BLK'])
+            _.forEach(rates['XTN'], function(r) {
+                r.rate *= 1000;
+            });
 
             $scope.rates = rates;
         });
@@ -58,7 +61,7 @@ app.controller('mainController', function($scope, Restangular, $sce) {
         // these have to be picked by the user
         $scope.txn = {
             coin_type: null,
-            method: null,
+            method: null,               // qr, email, sms or pubkey
             dest_pubkey: null,
             dest_email: null,
             dest_phone: null,
@@ -66,7 +69,9 @@ app.controller('mainController', function($scope, Restangular, $sce) {
             // what they have inserted so far
             deposit_list: [],
 
-            // max amount they can deposit
+            // XXX max amount they can deposit
+
+            busy: false,
         };
     };
     $scope.reset_all();
@@ -87,8 +92,10 @@ app.controller('mainController', function($scope, Restangular, $sce) {
 
     $scope.cash_ready = function() {
         // when are we ready to accept bills?
-        return $scope.txn.coin_type && $scope.txn.method &&
-                 ($scope.txn.method != 'qr' || $scope.txn.dest_pubkey);
+        return $scope.txn.coin_type && $scope.txn.method
+                 && ($scope.txn.method != 'qr' || $scope.txn.dest_pubkey)
+                 && ($scope.txn.method != 'email' || $scope.txn.dest_email)
+                 && ($scope.txn.method != 'sms' || $scope.txn.dest_phone);
     };
 
     $scope.can_stop = function() {
@@ -162,17 +169,84 @@ app.controller('mainController', function($scope, Restangular, $sce) {
             // we will be broken now...
             return;
         }
+
+        /* debug code: preload a sample completed txn */
+        Restangular.one('/v1/detail/423EB1246C-E3F081').get().then(function(r) {
+            $scope.txn.result = r.detail;
+        });
     });
+
+    $scope.print_and_done = function() {
+
+        // copy over the receipt
+        var v = angular.element(document.getElementById('proto-txn')).html();
+        $scope.last_receipt = $sce.trustAsHtml(v);
+        $scope.txn.busy = false;
+
+        $scope.reset_all()
+    };
+
+    $scope.show_err = function(resp) {
+        // use as a promise.catch handler
+        console.log("Failed REST response: ", resp);
+        var err = resp.data;
+        $alert({title: resp.status + ': ' + err.message,
+                content: (err.help_msg || "No extra help, sorry"),
+                placement: 'top', type: 'danger', show: true });
+
+        $scope.txn.busy = false;
+    };
 
     $scope.finalize_transaction = function() {
         // Tried and failed to use modals here. 
+        var txn = $scope.txn;
+        txn.busy = true;
 
-        var v = angular.element(document.getElementById('proto-txn')).html();
-        $scope.last_receipt = $sce.trustAsHtml(v);
+        // Perform the actual transaction.
+        if(!txn.coin_type.account) {
+            console.error("No API key so just a demo");
+            var aa = $alert({title: 'Just Playing',
+                    content: 'Since no API key is configured, we\'ll just pretend that worked...',
+                    placement: 'top', type: 'info', show: true, duration:15 });
+            $scope.print_and_done();
+        } else {
+            var m = txn.method;
+            var dest = 'voucher';
+            if(m == 'email') {
+                dest = txn.dest_email;
+            } else if(m == 'sms') {
+                dest = txn.dest_sms;
+            } else if(m == 'qr') {
+                dest = txn.dest_pubkey;
+            }
 
-        $scope.reset_all()
-    }
+            // Setup a PUT to specific endpoint, with "object" of arguments... ahem.
+            var newbie = Restangular.one('v1/new/send');
+            newbie.amount = $scope.current_quote();
+            newbie.dest = dest;
+            newbie.incl_pin = (dest != 'voucher');
+            newbie.account = txn.coin_type.account;
 
+            newbie.put().then(function(r) {
+                // Next step is to confirm the funds send. Might have some auditing/policy
+                // check here IRL.
+                var step2 = Restangular.one('v1/update/' + r.result.CK_refnum + '/auth_send');
+                step2.authcode = r.result.send_authcode;
+
+                step2.put().then(function(r2) {
+                    // It worked. Funds are on the way, unfortunately, we don't know the
+                    // p2p transaction number yet.
+                    txn.result = r2.result;
+                    console.log("Completely Done: ", txn);
+
+                    // need to get out for a bit before we print, so the DOM is
+                    // updated with txn.result above.
+                    $timeout($scope.print_and_done, 200);
+
+                }, $scope.show_err);
+            }, $scope.show_err);
+        }
+    };
 });
 
 app.controller('CKAuthCtrl', function($scope, $http, $log, Restangular, $rootScope)
@@ -217,7 +291,7 @@ app.controller('CKAuthCtrl', function($scope, $http, $log, Restangular, $rootSco
         $scope.auth_ok = false;
 
         // Fetch/refetch accounts list to prove keys work.
-        Restangular.oneUrl('v1/my/accounts').get().then(function(d) {
+        Restangular.one('v1/my/accounts').get().then(function(d) {
             var accounts = d.results;
 
             console.log("Got the account list ok: " + accounts.length + ' accounts');
@@ -273,13 +347,15 @@ app.config(function(RestangularProvider) {
     RestangularProvider.setBaseUrl(CK_API_HOST);
 
     RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
-        console.log("Full request: ", headers, url, route);
 
         if(route[0] != '/') {
             // our resources start with slash, but Restangular wants them without, so add
             // back in here.
             route = '/' + route;
         }
+
+        console.log("Full request: ", headers, url, route);
+
         _.extend(headers, get_auth_headers(route));
 
       return {
@@ -298,6 +374,15 @@ app.config(function(RestangularProvider) {
         //console.log("respon interceptro: data=", data, " response=", response);
 
       return data;
+    });
+
+    RestangularProvider.setErrorInterceptor(function(response, deferred, responseHandler) {
+        if(response.status != 200) {
+              console.log("API ERROR", response);
+
+        }
+
+        return true; // error not handled
     });
 
 

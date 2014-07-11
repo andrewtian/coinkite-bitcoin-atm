@@ -42,17 +42,17 @@
 
   <ul class="list-group" ng-show="txn.deposit_list.length">
     <li class="list-group-item">
-        <strong>Deposit Amount</strong>
+      <strong>Deposit Amount</strong>
     </li>
 
     <li class="list-group-item">
-        <table class="table table-condensed pdg-no-border">
-          <tbody>
-            <tr ng-repeat="bb in txn.deposit_list track by $index">
-              <td class="text-right" width="50%">{{bb.sign}} {{bb.amount}}
-              <td class="text-left" width="50%">{{bb.cct}}
-            </tr>
-        </table>
+      <table class="table table-condensed pdg-no-border">
+        <tbody>
+          <tr ng-repeat="bb in txn.deposit_list track by $index">
+            <td class="text-right" width="50%">{{bb.sign}} {{bb.amount}}
+            <td class="text-left" width="50%">{{bb.cct}}
+          </tr>
+      </table>
     </li>
 
     <li class="list-group-item">
@@ -68,5 +68,33 @@
       </p>
     </div>
 
+
+  </ul> 
+
+  <ul class="list-group" ng-show="txn.result" >
+    <li class="list-group-item">
+      <strong>Transaction Complete</strong>
+    </li>
+    <div class="panel-body">
+      <p class="lead" ng-show="txn.result.voucher">
+          <a href="{{txn.result.voucher.detail_page}}"
+                >Voucher {{txn.result.voucher.voucher_code|uppercase}}</a>
+          <br>
+          <small>
+            <a href="{{txn.result.voucher.detail_page}}">{{txn.result.voucher.detail_page}}</a>
+          </small>
+          <br>
+          <small>PIN Code</small>
+          <br>
+          {{txn.result.voucher.pin_code}}
+      </p>
+      <p class="lead" ng-hide="txn.result.voucher">
+          Funds are on the way
+      </p>
+
+      <p class="text-muted">
+        <small> CK Ref: {{txn.result.CK_refnum}}</small>
+      </p>
+    </div>
   </ul> 
 </div>
