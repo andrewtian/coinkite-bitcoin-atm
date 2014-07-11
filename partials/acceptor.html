@@ -1,26 +1,24 @@
-<div class="col-sm-4 well">
-  <h5 class="area-label"> 
-    <span class="fa-stack fa-lg">
-      <i class="fa fa-toggle-up fa-stack-2x" style="top: -3px; font-size: 1.5em"></i>
-      <i class="fa fa-money fa-large fa-rotate-90 fa-stack-1x" style="top: 14px"></i>
-    </span>
-    Bill Acceptor
+<h5 class="area-label"> 
+  <span class="fa-stack fa-lg">
+    <i class="fa fa-toggle-up fa-stack-2x" style="top: -3px; font-size: 1.5em"></i>
+    <i class="fa fa-money fa-large fa-rotate-90 fa-stack-1x" style="top: 14px"></i>
+  </span>
+  Bill Acceptor
 
-    <ng-include src="'partials/blinky.html'" ng-show="cash_ready()">
-    </ng-include>
-  </h5>
+  <ng-include src="'partials/blinky.html'" ng-show="cash_ready()">
+  </ng-include>
+</h5>
 
-  <p>
-    <em>Click to simulate inserting the bill.</em>
-  </p>
+<p>
+  <em>Click to simulate inserting the bill.</em>
+</p>
 
-  <ul class="list-inline">
-    <li ng-repeat="bill in possible_bills">
-      <button class="btn btn-sm btn-success bill-btn"
-          ng-disabled="!cash_ready()"
-          ng-click="insert_bill(bill)">{{bill.label}}</button>
-    </li>
-  </ul>
+<ul class="list-inline">
+  <li ng-repeat="bill in possible_bills">
+    <button class="btn btn-sm btn-success bill-btn"
+        ng-disabled="!cash_ready()"
+        ng-click="insert_bill(bill)">{{bill.label}}</button>
+  </li>
+</ul>
 
-</div>
 

@@ -2,7 +2,7 @@
 <html ng-app="cc-example-module"><head>
 
 <!-- Angular basics -->
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.14/angular.min.js"></script>
 <script src="https://oss.maxcdn.com/angular.strap/2.0.2/angular-strap.min.js"></script>
 <script src="https://oss.maxcdn.com/angular.strap/2.0.2/angular-strap.tpl.min.js"></script>
 
@@ -26,8 +26,11 @@
 </head>
 
 <body ng-controller="mainController">
+
+  <!-- these can be removed if you have "my-keys.json" file inplace. -->
   <div class="container">
     <ng-include src="'partials/banner.html'"></ng-include>
+
     <ng-include src="'partials/apikeys.html'"></ng-include>
   </div>
 
@@ -42,13 +45,20 @@
         </div>
 
         <div class="row modules-row">
-          <ng-include src="'partials/acceptor.html'"></ng-include>
-          <ng-include src="'partials/qr-scanner.html'"></ng-include>
-          <ng-include src="'partials/printer.html'"></ng-include>
+
+          <div class="col-sm-4 col-sm-offset-1 well">
+            <ng-include src="'partials/acceptor.html'"></ng-include>
+          </div>
+
+          <div class="col-sm-4 col-sm-offset-1 well">
+            <ng-include src="'partials/printer.html'"></ng-include>
+          </div>
+
         </div>
 
 	  </div>
 	</div>
 
   </div>
+
 </body></html>

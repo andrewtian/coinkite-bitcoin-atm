@@ -43,11 +43,11 @@
   <div class="form-group">
 
     <div class="btn-group" ng-model="txn.method" bs-radio-group>
-      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="qr">
-        Scan QR
-      </label>
       <label class="btn btn-default"><input type="radio" class="btn btn-default" value="paper">
         Paper Voucher
+      </label>
+      <label class="btn btn-default"><input type="radio" class="btn btn-default" value="qr">
+        Your Wallet
       </label>
       <label class="btn btn-default"><input type="radio" class="btn btn-default" value="email">
         Email
@@ -60,6 +60,12 @@
 
   <div ng-switch="txn.method">
     <p>
+      <div class="form-group" ng-switch-when='qr'>
+        <label>Your Wallet Address</label>
+        <input type="text" class="form-control" id="pubkey" placeholder="1pubkey123"
+          ng-model="txn.dest_pubkey">
+      </div>
+
       <div class="form-group" ng-switch-when='email'>
         <label>Your Email Address</label>
         <input type="email" class="form-control" id="email" placeholder="email@example.com"
@@ -76,13 +82,9 @@
         <em>A paper receipt will be printed at the conclusion of the transaction.</em>
       </div>
 
-      <div class="" ng-switch-when='qr'>
-        <em>Scan the QR code for your wallet below.</em>
-      </div>
     </p>
   </div>
             
-<!-- <pre class="bs-example-scope">$scope.method = {{method | json}};</pre> -->
 </div>
 
 
@@ -95,6 +97,12 @@
   <p ng-show="can_stop()">
     <button class="btn btn-primary" ng-click="finalize_transaction()">
       <i class="fa fa-check"></i> Complete Transaction
+    </button>
+    &nbsp;
+    &nbsp;
+    <button class="btn btn-xs" ng-click="reset_all()">
+      <!--- very bogus: in real world, they would loose their cash?! -->
+      <i class="fa fa-times"></i> Cancel
     </button>
   </p>
 </div>

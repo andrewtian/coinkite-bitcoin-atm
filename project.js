@@ -6,26 +6,32 @@ var CK_API_KEYS = {};
 
 var app = angular.module('cc-example-module', ['mgcrea.ngStrap', 'restangular']);
 
-app.controller('mainController', function($scope, Restangular) {
+
+app.controller('mainController', function($scope, Restangular, $sce) {
 
 	// NOTE: This endpoint is public and does not require any API key to read.
     $scope.rates = {};
     $scope.reload_rates = function() {
-      Restangular.oneUrl('public/rates').get().then(function(eps) {
-          console.log("Got rate-list list ok");
+        Restangular.oneUrl('public/rates').get().then(function(r) {
+            console.log("Got rate-list list ok");
+            var rates = r.rates;
 
-          $scope.rates = eps.rates;
-      });
+            // make up some numbers for testnet...
+            rates['XTN'] = angular.copy(rates['BLK'])
+
+            $scope.rates = rates;
+        });
     }
     $scope.reload_rates();
 
     // We will only display these crypto currencies. Comment them out to not support
-    $scope.currencies = [
+    var all_currencies = [
       { code: 'BTC', name: 'Bitcoin', sign: 'Ƀ' },
       { code: 'LTC', name: 'Litecoin', sign: 'Ł' },
       { code: 'BLK', name: 'Blackcoin', sign: 'Ѣ' },
       { code: 'XTN', name: 'Testnet3', sign: '❀' },
     ];
+    $scope.currencies = angular.copy(all_currencies)
 
     // List your local fiat currencies here, in order of preference.
     $scope.fav_currencies = [ 'CAD', 'USD', 'CNY' ];
@@ -59,10 +65,21 @@ app.controller('mainController', function($scope, Restangular) {
 
             // what they have inserted so far
             deposit_list: [],
-            active_cct: [$scope.reset_fav_cct],
+
+            // max amount they can deposit
         };
     };
     $scope.reset_all();
+
+    $scope.$watch('txn.coin_type', function(newVal, oldVal) {
+        // They have picked a new currency. Fetch balance for that
+        // account?
+        if(!newVal) return;
+        console.log("new coin type: ", newVal.code);
+        // XXX add code here:
+        //  - check we have some coins of that type to sell right now (balance)
+        //  - setup a limit so they don't deposit more than we can sell.
+    });
 
     $scope.need_qr = function() {
         return $scope.txn.method == 'qr' && !$scope.txn.dest_pubkey;
@@ -96,7 +113,6 @@ app.controller('mainController', function($scope, Restangular) {
         }
         
         $scope.txn.deposit_list.push(angular.copy(bill.value));
-        $scope.txn.active_cct.push(bill.value.cct);
     };
 
     $scope.current_quote = function() {
@@ -124,13 +140,42 @@ app.controller('mainController', function($scope, Restangular) {
         return Number(tot).toFixed(8);
     };
 
+    $scope.$on('new_account_list', function(evt, lst) {
+        console.log("New acct list!? ", lst);
+        // This means:
+        // - we have working API keys
+        // - a list of accounts has been fetched already
+        // So:
+        // - pick which accounts to use (first of each currency
+        // - remove currencies we can't support.
+        $scope.currencies = new Array();
+        _.forEach(all_currencies, function(c, idx) {
+            var ff = _.find(lst, {coin_type: c.code});
+            if(ff) { 
+                var linkage = angular.copy(c);
+                linkage.account = ff.CK_refnum;
+                $scope.currencies.push(linkage);
+            }
+        });
+        if(!$scope.currencies.length) {
+            alert("No subaccounts linked are useable?");
+            // we will be broken now...
+            return;
+        }
+    });
+
     $scope.finalize_transaction = function() {
+        // Tried and failed to use modals here. 
+
+        var v = angular.element(document.getElementById('proto-txn')).html();
+        $scope.last_receipt = $sce.trustAsHtml(v);
+
         $scope.reset_all()
     }
 
 });
 
-app.controller('CKReadCtrl', function($scope, $http, $log, Restangular)
+app.controller('CKAuthCtrl', function($scope, $http, $log, Restangular, $rootScope)
 {
 	// Initial state for variables.
     $scope.auth = {
@@ -141,6 +186,7 @@ app.controller('CKReadCtrl', function($scope, $http, $log, Restangular)
 	// Try to populate keys with useful defaults... ok if this fails.
 	$http({method:'GET', url:'my-keys.json'}).success(function(d, status) {
 		if(status == 200) {
+            // Set the keys from the file's data.
             if(d.host) CK_API_HOST = d.host;
             angular.extend(CK_API_KEYS, d);
 			$scope.auth = d;
@@ -153,34 +199,42 @@ app.controller('CKReadCtrl', function($scope, $http, $log, Restangular)
     });
 
     // Monitor the auth keys, and fetch the account list when/if they change.
-    $scope.accounts_ok = false;
+    $scope.auth_ok = false;
 
     // Whenever the keys change (or are set right), fetch the account
     // list as a test and also to start configuring ourselves to suit the new user's
     // account types.
     //
-    $scope.$watch('auth', function(newVal, oldVal) {
+    $scope.$watchCollection('auth', function(newVal, oldVal) {
         if(!newVal.api_key || !newVal.api_secret) {
-            console.warn("Empty API key or secret");
-            $scope.accounts_ok = false;
+            // Empty API key or secret -- not an error.
+            $scope.auth_ok = false;
             return;
         }
-        console.log("Watch triggers")
 
+        // update actual values that get used.
+        angular.extend(CK_API_KEYS, newVal);
+        $scope.auth_ok = false;
+
+        // Fetch/refetch accounts list to prove keys work.
         Restangular.oneUrl('v1/my/accounts').get().then(function(d) {
             var accounts = d.results;
 
-            console.log("Got account list ok: ", accounts);
+            console.log("Got the account list ok: " + accounts.length + ' accounts');
 
-            $scope.accounts_ok = true;
+            // update display (check vs. X)
+            $scope.auth_ok = true;
+
+            // tell rest of system about new state
+            $rootScope.$broadcast('new_account_list', accounts);
         });
     });
 });
 
+/*
 app.factory('myInterceptor', ['$log', function($log)
 {
-
-    // Purely for debug, and somewhat annoying.
+    // This code is purely for debug, and somewhat annoying....
 
     var myInterceptor = {
        'request': function(config) {
@@ -211,17 +265,22 @@ app.factory('myInterceptor', ['$log', function($log)
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.interceptors.push('myInterceptor');
 }]);
+*/
 
 
 app.config(function(RestangularProvider) {
-console.log("Hello?");
 
     RestangularProvider.setBaseUrl(CK_API_HOST);
 
     RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
         console.log("Full request: ", headers, url, route);
 
-        _.extend(headers, get_auth_headers('/' + route));
+        if(route[0] != '/') {
+            // our resources start with slash, but Restangular wants them without, so add
+            // back in here.
+            route = '/' + route;
+        }
+        _.extend(headers, get_auth_headers(route));
 
       return {
         element: element,

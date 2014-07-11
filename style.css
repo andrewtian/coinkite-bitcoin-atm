@@ -21,7 +21,7 @@
 
 /* 3 modules along bottom that simulate hardware devices */
 .modules-row div.col-sm-4 {
-    height: 300px;
+    height: 220px;
 }
 
 .bill-btn {

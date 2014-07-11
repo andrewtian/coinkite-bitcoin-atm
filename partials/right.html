@@ -4,20 +4,23 @@
 }
 
 </style>
-<div class="text-center panel panel-info">
+<div class="text-center panel panel-info" id="proto-txn">
   <div class="panel-heading">
     <h4 class="panel-title">Transaction: Buying {{txn.coin_type.name}}</h4>
   </div>
 
   <div ng-switch="txn.method" class="panel-body">
     <i class="fa fa-arrow-right"></i>
-    <span ng-switch-when="qr" ng-show="txn.dest_pubkey">
-      Sending to address:
-      <br><code>{{txn.dest_pubkey}}</code>
-    </span>
 
     <span ng-switch-when="paper">
       Printed Voucher
+    </span>
+
+    <span ng-switch-when="qr">
+      Sending to wallet:
+      <br>
+        <code>{{txn.dest_pubkey}}</code>
+        <em ng-hide="txn.dest_pubkey">(need valid pubkey)</em>
     </span>
 
     <span ng-switch-when="email">

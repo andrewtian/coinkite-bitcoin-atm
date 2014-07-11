@@ -1,6 +1,6 @@
-<div ng-controller="CKReadCtrl">
+<div ng-controller="CKAuthCtrl">
   <form novalidate class="form-horizontal" role="form" name="apikeys_form"
-            ng-model-options="{ debounce: 1000 }">
+            ng-model-options="{ debounce: 1000 }" >
     <div class="form-group">
       <label class="col-sm-2 control-label">API Key / Secret</label>
 
@@ -13,11 +13,15 @@
             placeholder="Sxxxxxxxx-xxxxxxxx-xxxxxxxxxxxxxxxx">
       </div>
       <div class="col-sm-2">
-        <span ng-show="accounts_ok">
+        <span ng-show="auth_ok">
           <i class="fa fa-check-square fa-2x"></i>
         </span>
-        <span ng-hide="accounts_ok">
-          <i class="fa fa-frown-o fa-2x"></i>
+        <span ng-hide="auth_ok">
+          <span class="fa-stack">
+            <i class="fa fa-square fa-stack-2x"></i>
+            <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+          </span>
+
         </span>
       </div>
     </div>

@@ -10,7 +10,7 @@
     </h3>
   </div>
 
-  <span ng-repeat="from_cct in currencies">
+  <span ng-repeat="from_cct in currencies|limitTo:3">
     <div ng-show="rates[from_cct.code]" class="panel-heading" style="background: #eee">
       <h4 class="panel-title">
           <b>{{from_cct.sign}}</b> &mdash; {{from_cct.name}} 
