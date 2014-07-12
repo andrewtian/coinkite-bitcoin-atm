@@ -94,16 +94,25 @@
     <em>Please insert your cash bills below.</em>
   </p>
 
-  <p ng-show="can_stop()">
-    <button class="btn btn-primary" ng-click="finalize_transaction()">
-      <i ng-class="txn.busy ? 'fa fa-refresh fa-spin' : 'fa fa-check'"></i>
-      &nbsp; Complete Transaction
-    </button>
-    &nbsp;
-    &nbsp;
-    <button class="btn btn-xs" ng-click="reset_all()">
-      <!--- very bogus: in real world, they would loose their cash?! -->
-      <i class="fa fa-times"></i> Cancel
-    </button>
-  </p>
+  <div ng-show="can_stop()">
+    <p>
+      <button class="btn btn-primary" ng-click="finalize_transaction()">
+        <i ng-class="txn.busy ? 'fa fa-refresh fa-spin' : 'fa fa-check'"></i>
+        &nbsp; Complete Transaction
+      </button>
+      &nbsp;
+      &nbsp;
+      <button class="btn btn-xs" ng-click="reset_all()">
+        <!--- very bogus: in real world, they would loose their cash?! -->
+        <i class="fa fa-times"></i> Cancel
+      </button>
+    </p>
+
+    <p ng-show="real_money">
+      <em>Note: this will remove funds from your account. This is a <b>working</b> demo!</em>
+    </p>
+    <p ng-hide="real_money">
+      <em>Nothing will happen as this is not a working demo without API keys above.</em>
+    </p>
+  </div>
 </div>

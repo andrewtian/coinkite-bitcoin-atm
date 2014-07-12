@@ -7,7 +7,10 @@ var CK_API_KEYS = {};
 var app = angular.module('cc-example-module', ['mgcrea.ngStrap', 'restangular']);
 
 
-app.controller('mainController', function($scope, Restangular, $sce, $alert, $timeout) {
+app.controller('mainController', function($scope, Restangular, $sce, $alert, $timeout)
+{
+	// are we working with "real" coins, or just in demo mode?
+	$scope.real_money = false;
 
 	// NOTE: This endpoint is public and does not require any API key to read.
     $scope.rates = {};
@@ -167,13 +170,18 @@ app.controller('mainController', function($scope, Restangular, $sce, $alert, $ti
         if(!$scope.currencies.length) {
             alert("No subaccounts linked are useable?");
             // we will be broken now...
+			$scope.currencies = angular.copy(all_currencies);
+			$scope.real_money = false;
+
             return;
         }
+		$scope.real_money = true;
 
-        /* debug code: preload a sample completed txn */
+        /* debug code: preload a sample completed txn
         Restangular.one('/v1/detail/423EB1246C-E3F081').get().then(function(r) {
             $scope.txn.result = r.detail;
         });
+*/
     });
 
     $scope.print_and_done = function() {

@@ -4,9 +4,64 @@
 and visit the [Coinkite Main Site](https://coinkite.com/) to open your
 account today!
 
-## Setup
+## Live Demo
 
-Use you favourite micro webserver to server `index.html` from this directory.
+[coinkite.github.io/coinkite-bitcoin-atm](http://coinkite.github.io/coinkite-bitcoin-atm/)
+for a working live demo served by Github Pages.
+
+## Operation
+
+If you leave the API Key and secret blank, the system will support
+Bitcoin, Litecoin and Blackcoin in a demo mode. You can do all parts
+of the transaction, but no coins will be sent.
+
+However, if you put in your API key (from <https://coinkite.com/merchant/api>)
+then the list of coin-types
+will be restricted to the types of subaccounts you have and are
+allowed on that API key. It simply picks the first account of each
+coin type from your account. It doesn't check balances or anything
+fancy like that. The API key you use needs to have the 'read',
+'send' and 'send2' permissions.
+
+## Screenshots
+
+### Buy Coins Example
+![image](snaps/done.png)
+
+### Idle Screen (rate table)
+![image](snaps/idle.png)
+
+## Limitations
+
+This code has some limitations, because it is only a demo:
+
+- Does not consider the balance of the source accounts. It should
+not start transactions if it doesn't have enough coins on-hand (at
+Coinkite) to sell.
+
+- Exchange rates shown are just Coinkite reference exchange rates,
+and do not include a spread and should be pegged to a specific
+exchange. (Aside: our Coinkite terminals do exactly that,
+and support a spread different both for each fiat and also
+each coin type).
+
+- Does not handle the case where a customer has inserted cash but
+the transaction doesn't complete. This is an important error case
+that real code should be careful to deal with correctly.
+
+- The receipt is not the best and should include more details.
+
+- When deployed as an ATM, the API keys would be on the ATM itself,
+which is unacceptable.  At a minimum, we would suggest encrypting
+them with a password that the operator must provide on startup.
+
+- Bitcoin (pubkey) address entry should always be via QR scanner, and
+never by keyboard.
+
+
+## Local Install
+
+Use you favourite micro webserver to serve `index.html` from this directory.
 You can do this easily with Python (which is probably already installed).
 
     python -m SimpleHTTPServer
@@ -26,7 +81,7 @@ Example `my-keys.json` file:
 
 ## Requirements
 
-For this demo, we are using:
+We are using:
 
 - AngularJS <https://docs.angularjs.org>
 - Bootstrap <http://getbootstrap.com/>
@@ -36,27 +91,7 @@ For this demo, we are using:
 - font-awesome <http://fontawesome.io/>
 - crypto-js (just HMAC-SHA256) <https://code.google.com/p/crypto-js/>
 
-All these files, are being provided by CDN sources to make this package lighter.
-
-## Discussion
-
-This example is using `$http` for the main JSON resource fetching. However,
-the typeahead feature fetches its data via Restangular. All API
-endpoints (except under `/public/`) require authentication with an API
-key and secret. The keys you need can be created on
-[Coinkite.com under Merchant / API]([https://coinkite.com/merchant/api)
-
-
-See `coinkite-api.js` for the tricky bits: it will generate the
-required headers for your HTTP request and works under both
-`node.js` and in the browser.
-
-This is a **DEMO** program, and we would never recommend putting
-API secret keys into browser-side code in any other case.
-
-## Screenshot
-
-![image](screenshot.png)
+All these files are being provided by CDN sources to make this package lighter.
 
 ## More about Coinkite
 
