@@ -28,12 +28,12 @@ fancy like that. The API key you use needs to have the 'read',
 ### Buy Coins Example
 ![image](snaps/done.png)
 
-### Idle Screen (rate table)
+### Idle Screen
 ![image](snaps/idle.png)
 
 ## Limitations
 
-This code has some limitations, because it is only a demo:
+This code has some limitations because it is a demo:
 
 - Does not consider the balance of the source accounts. It should
 not start transactions if it doesn't have enough coins on-hand (at
