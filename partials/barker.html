@@ -20,12 +20,12 @@
 
     <table class="table" ng-show="rates[from_cct.code]" style="margin-bottom:0">
       <tbody>
-      <tr ng-repeat="to_cct in fav_currencies" ng-init="pair = rates[from_cct.code][to_cct]">
+      <tr ng-repeat="to_cct in fav_currencies">
         <td class="text-right">
-          {{pair.pretty}}
+          {{rates[from_cct.code][to_cct].pretty}}
         </td>
         <td class="text-left">
-          <small>{{pair.code}}</small>
+          <small>{{rates[from_cct.code][to_cct].code}}</small>
         </td>
       </tr>
       <tfoot>
