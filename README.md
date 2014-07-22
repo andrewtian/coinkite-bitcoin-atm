@@ -1,8 +1,8 @@
-# Coinkite Bitcoin ATM Example in [AngularJS](https://angularjs.org/)
+# Bitcoin ATM Example in [AngularJS](https://angularjs.org/)
 
-[Learn more about Coinkite's API here](https://docs.coinkite.com/)
+_[Learn more about Coinkite's API here](https://docs.coinkite.com/)
 and visit the [Coinkite Main Site](https://coinkite.com/) to open your
-account today!
+account today!_
 
 ## Live Demo
 
